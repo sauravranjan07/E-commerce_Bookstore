@@ -6,5 +6,5 @@ app.listen(3000,()=>{
    
 })
 app.get('/',(req:Request,resp:Response)=>{
-    resp.send({m:"helooo im working on 3000"})
+    resp.send({message:"helooo im working on 3000"})
 })
