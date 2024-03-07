@@ -42,6 +42,6 @@ async function registerUser(
 }
 async function getAllUusers(req:express.Request,resp:express.Response):Promise<Record<string,any>>{
     let result:Array<Record<string,any>>=await userSchema.find()
-    return resp.json({result})
+    return resp.json({dataCount:result.length,result})
 }
 export { registerUser,getAllUusers };
