@@ -6,7 +6,8 @@ const user=new mongoose.Schema({
     },
     email:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
     phone:{
         type:Number,
@@ -20,7 +21,8 @@ const user=new mongoose.Schema({
         type:String,
         required:true
     }
-},{timestamps:true
-})
+},
+{timestamps:true}
+)
 const userSchema=mongoose.model("users",user)
 export{userSchema}
