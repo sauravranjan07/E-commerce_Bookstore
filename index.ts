@@ -3,7 +3,6 @@ import { createConnection } from "./Database/connection";
 import morgan from "morgan";
 import dotenv from "dotenv";
 dotenv.config();
-
 const app: Express = express();
 
 app.use(morgan("dev"));
