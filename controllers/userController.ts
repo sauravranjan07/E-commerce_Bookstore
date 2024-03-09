@@ -46,7 +46,7 @@ async function getAllUusers(
 ): Promise<Record<string, any>> {
   let result: Array<Record<string, any>> = await userSchema.find();
   if (!result.length) {
-    resp.statusCode=404
+    resp.statusCode = 404;
     return resp.json({ message: "no data exists", dataCount: result.length });
   }
   return resp.json({ dataCount: result.length, result });
@@ -65,11 +65,31 @@ async function deleteUserById(
     });
   }
   const result = await userSchema.findByIdAndDelete({ _id: id });
-  if(result==null){
-    resp.statusCode=404
+  if (result == null) {
+    resp.statusCode = 404;
     return resp.json({ message: "no data found", result: result });
   }
-  resp.statusCode=200
+  resp.statusCode = 200;
   return resp.json({ message: "Data deleted successfully", result: result });
 }
-export { registerUser, getAllUusers, deleteUserById };
+async function loginUser(
+  req: express.Request,
+  resp: express.Response
+): Promise<Record<string, any>> {
+  // 1.check email exists or not
+  const email = req.body.email;
+  const result = await userSchema.findOne({ email: email });
+  if (!result) {
+    resp.statusCode = 404;
+    return resp.json({ message: "Email dosent exist", success: false });
+  }
+  // 2.if password not matched
+  else if (result.password != req.body.password) {
+    resp.statusCode = 400;
+    return resp.json({ message: "Password not matched", success: false });
+  } else {
+    return resp.json({ message: "Login successfully", success: true });
+  }
+}
+
+export { registerUser, getAllUusers, deleteUserById, loginUser };
