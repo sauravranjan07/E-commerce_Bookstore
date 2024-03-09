@@ -16,12 +16,12 @@ async function registerUser(
     }
     let { email, password, repassword } = req.body;
     if (password !== repassword) {
-        resp.statusCode = 500;
-        return resp.json({
-          message: "Password not matched",
-          success: false,
-        });
-      }
+      resp.statusCode = 500;
+      return resp.json({
+        message: "Password not matched",
+        success: false,
+      });
+    }
     let userData = await userSchema.findOne({ email: email });
     if (userData) {
       resp.statusCode = 500;
@@ -33,15 +33,43 @@ async function registerUser(
     let result: any = await new userSchema(req.body).save();
     resp.statusCode = 200;
     return resp.send({
-      message: "user controller working",
+      message: "user added successfully",
       data: result,
     });
   } catch (error) {
     return resp.send(error);
   }
 }
-async function getAllUusers(req:express.Request,resp:express.Response):Promise<Record<string,any>>{
-    let result:Array<Record<string,any>>=await userSchema.find()
-    return resp.json({dataCount:result.length,result})
+async function getAllUusers(
+  req: express.Request,
+  resp: express.Response
+): Promise<Record<string, any>> {
+  let result: Array<Record<string, any>> = await userSchema.find();
+  if (!result.length) {
+    resp.statusCode=404
+    return resp.json({ message: "no data exists", dataCount: result.length });
+  }
+  return resp.json({ dataCount: result.length, result });
 }
-export { registerUser,getAllUusers };
+
+async function deleteUserById(
+  req: express.Request,
+  resp: express.Response
+): Promise<Record<string, any>> {
+  const id = req.params.id;
+  if (!id) {
+    return resp.json({
+      message: "please provide an id",
+      success: false,
+      id: false,
+    });
+  }
+  const result = await userSchema.findByIdAndDelete({ _id: id });
+  if(result==null){
+    resp.statusCode=404
+    return resp.json({ message: "no data found", result: result });
+  }
+  resp.statusCode=200
+  return resp.json({ message: "Data deleted successfully", result: result });
+}
+export { registerUser, getAllUusers, deleteUserById };
