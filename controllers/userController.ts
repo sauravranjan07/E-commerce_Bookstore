@@ -2,6 +2,7 @@ import { userSchema } from "../Models/user";
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
 import {generatePassword,comparePassword} from '../helpers/hashPassword'
+
 async function registerUser(
   req: express.Request,
   resp: express.Response
