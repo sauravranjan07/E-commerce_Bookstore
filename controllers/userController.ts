@@ -1,5 +1,7 @@
 import { userSchema } from "../Models/user";
 import express from "express";
+import jsonwebtoken from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
 
 async function registerUser(
   req: express.Request,
@@ -15,7 +17,7 @@ async function registerUser(
       });
     }
     let { email, password, repassword } = req.body;
-    if (password !== repassword) {
+    if (password != repassword) {
       resp.statusCode = 500;
       return resp.json({
         message: "Password not matched",
@@ -30,7 +32,16 @@ async function registerUser(
         success: false,
       });
     }
-    let result: any = await new userSchema(req.body).save();
+    const hash = bcrypt.hashSync(password, 10);
+    const user = {
+      name: req.body.name,
+      email: req.body.email,
+      password: hash,
+      repassword: hash,
+      phone: req.body.phone,
+      isAdmin: req.body.isAdmin,
+    };
+    let result: any = await new userSchema(user).save();
     resp.statusCode = 200;
     return resp.send({
       message: "user added successfully",
@@ -84,11 +95,22 @@ async function loginUser(
     return resp.json({ message: "Email dosent exist", success: false });
   }
   // 2.if password not matched
-  else if (result.password != req.body.password) {
+  const verifiedPassword = bcrypt.compareSync(req.body.password,result.password)
+  if (!verifiedPassword) {
     resp.statusCode = 400;
     return resp.json({ message: "Password not matched", success: false });
   } else {
-    return resp.json({ message: "Login successfully", success: true });
+    const payload = {
+      id: result._id,
+      email: result.email,
+      isAdmin: result.isAdmin,
+    };
+    const token = jsonwebtoken.sign(payload, "Saurav", { expiresIn: "240s" });
+    return resp.json({
+      message: "Login successfully",
+      success: true,
+      token,
+    });
   }
 }
 
