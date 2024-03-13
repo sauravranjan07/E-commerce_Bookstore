@@ -1,8 +1,7 @@
 import { userSchema } from "../Models/user";
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
-import * as bcrypt from "bcrypt";
-
+import {generatePassword,comparePassword} from '../helpers/hashPassword'
 async function registerUser(
   req: express.Request,
   resp: express.Response
@@ -32,7 +31,7 @@ async function registerUser(
         success: false,
       });
     }
-    const hash = bcrypt.hashSync(password, 10);
+    const hash = await generatePassword(password)
     const user = {
       name: req.body.name,
       email: req.body.email,
@@ -86,31 +85,35 @@ async function deleteUserById(
 async function loginUser(
   req: express.Request,
   resp: express.Response
-): Promise<Record<string, any>> {
+):Promise<Record<string, any>> {
   // 1.check email exists or not
-  const email = req.body.email;
+  try {
+    const email = req.body.email;
   const result = await userSchema.findOne({ email: email });
   if (!result) {
     resp.statusCode = 404;
-    return resp.json({ message: "Email dosent exist", success: false });
+    return resp.json({ message: "Email dosent exist", success: false ,token:"Null"});
   }
   // 2.if password not matched
-  const verifiedPassword = bcrypt.compareSync(req.body.password,result.password)
+  const verifiedPassword = await comparePassword(req.body.password,result.password)
   if (!verifiedPassword) {
     resp.statusCode = 400;
-    return resp.json({ message: "Password not matched", success: false });
+    return resp.json({ message: "Password not matched", success: false ,token:"null"});
   } else {
     const payload = {
       id: result._id,
       email: result.email,
       isAdmin: result.isAdmin,
     };
-    const token = jsonwebtoken.sign(payload, "Saurav", { expiresIn: "240s" });
+    const token:string = jsonwebtoken.sign(payload, "Saurav", { expiresIn: "240s" });
     return resp.json({
       message: "Login successfully",
       success: true,
       token,
     });
+  }
+  } catch (error) {
+    return new Error("you have an error")
   }
 }
 
