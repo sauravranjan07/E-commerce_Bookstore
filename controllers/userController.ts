@@ -1,22 +1,24 @@
 import { userSchema } from "../Models/user";
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
-import {generatePassword,comparePassword} from '../helpers/hashPassword'
-
+import { generatePassword, comparePassword } from "../helpers/hashPassword";
+import { validateRegistration } from "../helpers/schemaValidators";
+import Signup from '../interfaces/signup'
 async function registerUser(
   req: express.Request,
   resp: express.Response
 ): Promise<Record<string, any>> {
-  const data: any = req.body;
+  const data: Signup = req.body;
+
   try {
-    if (!data) {
+    if (validateRegistration(data)) {
       resp.statusCode = 400;
       return resp.send({
-        message: "body not available",
+        message: validateRegistration(data)[0].message,
         success: false,
       });
     }
-    let { email, password, repassword } = req.body;
+    let { email, password, repassword } = data;
     if (password != repassword) {
       resp.statusCode = 500;
       return resp.json({
@@ -32,14 +34,14 @@ async function registerUser(
         success: false,
       });
     }
-    const hash = await generatePassword(password)
+    const hash = await generatePassword(password);
     const user = {
-      name: req.body.name,
-      email: req.body.email,
+      name: data.name,
+      email: data.email,
       password: hash,
       repassword: hash,
-      phone: req.body.phone,
-      isAdmin: req.body.isAdmin,
+      phone: data.phone,
+      isAdmin: data.isAdmin,
     };
     let result: any = await new userSchema(user).save();
     resp.statusCode = 200;
@@ -86,35 +88,48 @@ async function deleteUserById(
 async function loginUser(
   req: express.Request,
   resp: express.Response
-):Promise<Record<string, any>> {
+): Promise<Record<string, any>> {
   // 1.check email exists or not
   try {
     const email = req.body.email;
-  const result = await userSchema.findOne({ email: email });
-  if (!result) {
-    resp.statusCode = 404;
-    return resp.json({ message: "Email dosent exist", success: false ,token:"Null"});
-  }
-  // 2.if password not matched
-  const verifiedPassword = await comparePassword(req.body.password,result.password)
-  if (!verifiedPassword) {
-    resp.statusCode = 400;
-    return resp.json({ message: "Password not matched", success: false ,token:"null"});
-  } else {
-    const payload = {
-      id: result._id,
-      email: result.email,
-      isAdmin: result.isAdmin,
-    };
-    const token:string = jsonwebtoken.sign(payload, "Saurav", { expiresIn: "240s" });
-    return resp.json({
-      message: "Login successfully",
-      success: true,
-      token,
-    });
-  }
+    const result = await userSchema.findOne({ email: email });
+    if (!result) {
+      resp.statusCode = 404;
+      return resp.json({
+        message: "Email dosent exist",
+        success: false,
+        token: "Null",
+      });
+    }
+    // 2.if password not matched
+    const verifiedPassword = await comparePassword(
+      req.body.password,
+      result.password
+    );
+    if (!verifiedPassword) {
+      resp.statusCode = 400;
+      return resp.json({
+        message: "Password not matched",
+        success: false,
+        token: "null",
+      });
+    } else {
+      const payload = {
+        id: result._id,
+        email: result.email,
+        isAdmin: result.isAdmin,
+      };
+      const token: string = jsonwebtoken.sign(payload, "Saurav", {
+        expiresIn: "240s",
+      });
+      return resp.json({
+        message: "Login successfully",
+        success: true,
+        token,
+      });
+    }
   } catch (error) {
-    return new Error("you have an error")
+    return new Error("you have an error");
   }
 }
 
