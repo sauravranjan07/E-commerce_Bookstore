@@ -6,6 +6,6 @@ import {userAuthMiddleware,adminAuthMiddleware} from '../middlewares/user-auth-m
 
 userRouter.post('/signup',registerUser)
 userRouter.get('/allusers',adminAuthMiddleware,getAllUusers)
-userRouter.delete("/delete/:id",userAuthMiddleware,deleteUserById)
+userRouter.delete("/delete/:id",adminAuthMiddleware,deleteUserById)
 userRouter.post("/login",loginUser)
 export{userRouter}
