@@ -20,16 +20,20 @@ async function createOrder(
       data: final_result,
       success: true,
     });
-  } catch (error:any) {
-    return error.message
+  } catch (error: any) {
+    return error.message;
   }
 }
-async function getMyOrder(req:express.Request,resp:express.Response):Promise<Record<string,any>>{
-    const id=req.params.id
-    let result=await orderSchema.find({user:id})
-    return resp.send({
-        data:result,
-        success:true
-    })
+async function getMyOrder(
+  req: express.Request,
+  resp: express.Response
+): Promise<Record<string, any>> {
+  const id = req.params.id;
+  let result = await orderSchema.find({ user: id });
+  return resp.send({
+    total_Orders:result.length,
+    data: result,
+    success: true,
+  });
 }
-export { createOrder,getMyOrder};
+export { createOrder, getMyOrder };
