@@ -2,8 +2,9 @@ import { userSchema } from "../Models/user";
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
 import { generatePassword, comparePassword } from "../helpers/hashPassword";
-import { validateRegistration } from "../helpers/schemaValidators";
+import { validateRegistration,validateLoginCredentials } from "../helpers/schemaValidators";
 import Signup from '../interfaces/signup'
+import Login from '../interfaces/login'
 async function registerUser(
   req: express.Request,
   resp: express.Response
@@ -92,6 +93,14 @@ async function loginUser(
   // 1.check email exists or not
   try {
     const email = req.body.email;
+    const data:Login=req.body
+    if(validateLoginCredentials(req.body)){
+      resp.statusCode = 400;
+      return resp.send({
+        message: validateLoginCredentials(data)[0].message,
+        success: false,
+      });
+    }
     const result = await userSchema.findOne({ email: email });
     if (!result) {
       resp.statusCode = 404;
