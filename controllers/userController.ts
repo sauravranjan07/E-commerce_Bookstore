@@ -122,13 +122,13 @@ async function loginUser(
         success: false,
         token: "null",
       });
-    } else {
+    } else { //Creating payload which will stored in request session with Jwt Auth
       const payload = {
         id: result._id,
         email: result.email,
         isAdmin: result.isAdmin,
       };
-      const token: string = jsonwebtoken.sign(payload, "Saurav", {
+      const token: string = jsonwebtoken.sign(payload, "Saurav", { //signing JWT Token
         expiresIn: "240s",
       });
       return resp.json({
