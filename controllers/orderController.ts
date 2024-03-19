@@ -32,4 +32,28 @@ async function getMyOrder(req: express.Request, resp: express.Response) {
     success: true,
   });
 }
-export { createOrder, getMyOrder };
+async function deleteMyOrder(
+  req: express.Request,
+  resp: express.Response
+): Promise<Record<string, any>> {
+  try {
+    const id = req.params.id;
+    let result = await orderSchema.findByIdAndDelete({ _id: id });
+    if (result) {
+      return resp.send({
+        data: result,
+        success: false,
+      });
+    }
+    resp.statusCode = 404;
+    return resp.send({
+      data: "Data not found",
+      success: false,
+    });
+  } catch (error:any) {
+    return resp.send({
+      data:error.message
+    })
+  }
+}
+export { createOrder, getMyOrder, deleteMyOrder };
