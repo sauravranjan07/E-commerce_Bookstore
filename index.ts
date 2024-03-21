@@ -23,6 +23,7 @@ app.get("/", (req: Request, resp: Response) => {
 });
 const apirouter=express.Router()
 app.use('/api',apirouter)
+apirouter.use('/images',express.static('media/products'))
 apirouter.use('/user',userRouter)
 apirouter.use('/books',bookRouter)
 apirouter.use('/category',categoryRouter)
