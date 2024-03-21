@@ -4,7 +4,7 @@ import {createCategory,getAllCategory,deleteCategoryById} from '../controllers/c
 import { adminAuthMiddleware } from '../middlewares/user-auth-middleware'
 
 
-categoryRouter.post('/add',adminAuthMiddleware,createCategory)
+categoryRouter.post('/add',createCategory)
 categoryRouter.get('/getcategories',getAllCategory)
 categoryRouter.delete('/deletecategory/:id',adminAuthMiddleware,deleteCategoryById)
 

@@ -1,17 +1,27 @@
 import express from "express";
 import { bookSchema } from "../Models/book";
+let upload_Folder = "media/products";
 
 async function createBook(req: express.Request, resp: express.Response) {
-  const data = await bookSchema.find({ name: req.body.name });
-  if (data.length) {
-    resp.statusCode = 400;
-    return resp.send({
-      message: "book with same name already exists",
-      datacount: data.length,
+  try {
+    const productImage = upload_Folder + "/" + req.file?.filename;
+    const data = await bookSchema.find({ name: req.body.name });
+    if (data.length) {
+      resp.statusCode = 400;
+      return resp.send({
+        message: "book with same name already exists",
+        datacount: data.length,
+      });
+    }
+    let product = new bookSchema({
+      ...req.body,
+      productImage, //giving image name should be same as model name
     });
+    const result = await product.save();
+    return resp.send({ message: "book added succesfully", result });
+  } catch (error: any) {
+    return resp.json({ message: error.message });
   }
-  const result = await new bookSchema(req.body).save();
-  return resp.send({ message: "book added succesfully", result });
 }
 
 async function getAllBooks(req: express.Request, resp: express.Response) {
