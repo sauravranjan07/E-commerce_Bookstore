@@ -5,7 +5,6 @@ async function generatePassword(password:string,salt:number=10):Promise<string>{
 }
 async function comparePassword(password:string,hashPassword:string):Promise<boolean>{
    const isMatched= bcrypt.compareSync(password,hashPassword)
-   console.log(password,hashPassword)
    return isMatched
 }
 export{generatePassword,comparePassword}
