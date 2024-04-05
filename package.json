@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prestart": "chmod +x node_modules/.bin/ts-node",
-    "start": "nodemon index.ts"
+    "start": "ts-node index.ts"
   },
   "keywords": [],
   "author": "",
