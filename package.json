@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.ts"
+    "prestart": "chmod +x node_modules/.bin/ts-node",
+    "start": "ts-node index.ts"
   },
   "keywords": [],
   "author": "",
