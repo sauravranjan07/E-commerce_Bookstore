@@ -7,6 +7,7 @@ import { bookRouter } from "./Routes/bookRoutes";
 import { categoryRouter } from "./Routes/categoryRoute";
 import { orderRouter } from "./Routes/orderRoutes";
 import{handleError} from './middlewares/error-handle'
+import 'express-async-errors'
 dotenv.config();
 const app: Express = express();
 app.use(express.json());
