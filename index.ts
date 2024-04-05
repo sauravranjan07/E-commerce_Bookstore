@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { bookRouter } from "./Routes/bookRoutes";
 import { categoryRouter } from "./Routes/categoryRoute";
 import { orderRouter } from "./Routes/orderRoutes";
+import{handleError} from './middlewares/error-handle'
 dotenv.config();
 const app: Express = express();
 app.use(express.json());
@@ -26,3 +27,5 @@ apirouter.use("/user", userRouter);
 apirouter.use("/books", bookRouter);
 apirouter.use("/category", categoryRouter);
 apirouter.use("/order", orderRouter);
+
+app.use(handleError)
