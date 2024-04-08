@@ -1,10 +1,10 @@
 import { userSchema } from "../Models/user";
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
-import { generatePassword, comparePassword } from "../helpers/hashPassword";
 import { validateRegistration,validateLoginCredentials } from "../helpers/schemaValidators";
 import Signup from '../interfaces/signup'
 import Login from '../interfaces/login'
+import * as hashPasswordHelper from 'password-hash'
 async function registerUser(
   req: express.Request,
   resp: express.Response
@@ -35,7 +35,7 @@ async function registerUser(
         success: false,
       });
     }
-    const hash = await generatePassword(password);
+    const hash = hashPasswordHelper.generate(password);
     const user = {
       name: data.name,
       email: data.email,
@@ -111,7 +111,7 @@ async function loginUser(
       });
     }
     // 2.if password not matched
-    const verifiedPassword = await comparePassword(
+    const verifiedPassword = hashPasswordHelper.verify(
       req.body.password,
       result.password
     );
