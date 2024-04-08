@@ -32,3 +32,5 @@ apirouter.use("/category", categoryRouter);
 apirouter.use("/order", orderRouter);
 
 app.use(handleError)
+
+export default app
