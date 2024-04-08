@@ -1,4 +1,4 @@
-import express, { Express, Request } from "express";
+import express, { Request } from "express";
 import { createConnection } from "./Database/connection";
 import { userRouter } from "./Routes/userRoutes";
 import morgan from "morgan";
@@ -10,7 +10,7 @@ import{handleError} from './middlewares/error-handle'
 import 'express-async-errors'
 import cors from "cors";
 dotenv.config();
-const app: Express = express();
+const app = express();
 app.use(express.json());
 
 app.use(morgan("dev"));
