@@ -1,4 +1,4 @@
-import express, { Request } from "express";
+import express, { Request ,Response} from "express";
 import { createConnection } from "./Database/connection";
 import { userRouter } from "./Routes/userRoutes";
 import morgan from "morgan";
@@ -23,6 +23,9 @@ app.listen(3000, async (): Promise<any> => {
     );
   }
 });
+app.get('/',(req:Request,resp:Response)=>{
+  resp.send("<h1>welcome to my website</h1>")
+})
 const apirouter = express.Router();
 app.use("/api", apirouter);
 apirouter.use("/images", express.static("media/products"));
