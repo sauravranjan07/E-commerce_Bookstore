@@ -4,7 +4,7 @@ let upload_Folder = "media/products";
 
 async function createBook(req: express.Request, resp: express.Response) {
   try {
-    const productImage = upload_Folder + "/" + req.file?.filename;
+    const productImage =  req.file?.filename;
     const data = await bookSchema.find({ name: req.body.name });
     if (data.length) {
       resp.statusCode = 400;
