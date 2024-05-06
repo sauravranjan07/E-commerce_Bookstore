@@ -18,7 +18,7 @@ async function testEmail(email: string, data: any,name:any): Promise<string> {
     };
     let transporter = mailHelper.createTransport(config);
     let mailGenerator = new Mailgen({
-      theme: "default",
+      theme: "cerberus",
       product: {
         name: "PageTurnBooks",
         link: "https://mailgen.js",
@@ -28,7 +28,7 @@ async function testEmail(email: string, data: any,name:any): Promise<string> {
     let tableRows: TableRow[] = data.map((item:any)=> ({
       name: item.name,
       quantity: item.quantity.toString(), // Convert to string for alignment
-      price: 'Rs' + item.price.toString()// Format price as currency
+      price: 'Rs' +" " +item.price.toString()// Format price as currency
     }));
     var response_body:any= {
       body: {
