@@ -14,23 +14,21 @@ async function createOrder(
     for (let index in data) {
       let order = data[index];
       let productId = order.book;
-      let data2=await bookSchema.findOne({ _id: productId })
+      let data2 = await bookSchema.findOne({ _id: productId });
       data[index].price = data2?.price;
       data[index].name = data2?.name;
     }
-    let final_result = await orderSchema.create(data);
-
-    let{name,email}=req.user?.userData
-  
-    let email_response = await testEmail(
-      email,
-      final_result,
-      name
-    );
+    let final_result:Array<any>|any = await orderSchema.create(data);
+    let { name, email } = req.user?.userData;
+    for(let i=0;i<final_result.length;i++){
+      tp+=final_result[i].price*final_result[i].quantity
+    }
+    let email_response = await testEmail(email, final_result, name,tp);
     return resp.send({
       data: final_result,
       success: true,
       email: req.user?.userData.email,
+      total:tp,
       email_response: email_response,
     });
   } catch (error: any) {

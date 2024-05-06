@@ -25,7 +25,9 @@ async function createBook(req: express.Request, resp: express.Response) {
 }
 
 async function getAllBooks(req: express.Request, resp: express.Response) {
-  const result = await bookSchema.find();
+  const result = await bookSchema.find().populate([
+    {path:"category",select:"name"}
+  ]);
   return resp.send({
     dataCount: result.length,
     message: "All books fetched",

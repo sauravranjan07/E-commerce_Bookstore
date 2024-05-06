@@ -47,11 +47,13 @@ declare namespace Mailgen {
         goToAction?: GoToAction | undefined;
         outro?: string | string[] | undefined;
         total_price?:number|string|undefined
+       
     }
 
     interface Table {
         data: any[];
         columns?: ColumnOptions[] | undefined;
+        
     }
 
     interface ColumnOptions {

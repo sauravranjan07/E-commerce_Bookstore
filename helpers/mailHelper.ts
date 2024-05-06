@@ -4,11 +4,17 @@ interface TableRow {
   name: string;
   quantity: string;
   price: string;
+  total:number
 }
 
-async function testEmail(email: string, data: any,name:any): Promise<string> {
+async function testEmail(
+  email: string,
+  data: any,
+  name: string,
+  Total: number
+): Promise<string> {
   try {
-    console.log("insideeeeeee")
+    console.log("insideeeeeee");
     let config = {
       service: "gmail",
       auth: {
@@ -18,33 +24,35 @@ async function testEmail(email: string, data: any,name:any): Promise<string> {
     };
     let transporter = mailHelper.createTransport(config);
     let mailGenerator = new Mailgen({
-      theme: "cerberus",
+      theme: "default",
       product: {
         name: "PageTurnBooks",
         link: "https://mailgen.js",
       },
     });
     // Construct table rows dynamically based on items
-    let tableRows: TableRow[] = data.map((item:any)=> ({
+    let tableRows: TableRow[] = data.map((item: any) => ({
       name: item.name,
       quantity: item.quantity.toString(), // Convert to string for alignment
-      price: 'Rs' +" " +item.price.toString()// Format price as currency
+      price: "Rs" + " " + item.price.toString(), 
+      // Format price as currency
     }));
-    var response_body:any= {
+    var response_body: any = {
       body: {
-        name:name,
-        intro: 'Your order details:',
+        name: name,
+        intro: `Your orders Total: ${Total}`,
         table: {
           columns: [
-            { customWidth: '50%', customAlignment: 'left' },
-            { customWidth: '25%', customAlignment: 'right' },
-            { customWidth: '25%', customAlignment: 'right' }
+            { customWidth: "50%", customAlignment: "left" },
+            { customWidth: "25%", customAlignment: "right" },
+            { customWidth: "25%", customAlignment: "right" },
           ],
           data: tableRows,
-        outro: 'Thank you for shopping with us!'
-      }
-    }
-  }
+          outro: "Thank you for shopping with us!",
+        },
+       
+      },
+    };
     let mail = mailGenerator.generate(response_body);
     let message = {
       from: "pageturnbooks007@gmail.com",
