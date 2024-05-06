@@ -10,10 +10,13 @@ function userAuthMiddleware(
     let token: any = ""; // ek variable
     token = B_token?.split(" ")[1]; // token me pehle space ke baad jwt retrieve
     const payload = jsonwebtoken.verify(token, "Saurav");
-    req.user = {
-      userData: payload, //session ke andar user key ke saath request me payload gaya
-    };
-    next();
+    if (payload) {
+      console.log(payload);
+      req.user = {
+        userData: payload, //session ke andar user key ke saath request me payload gaya
+      };
+      next();
+    }
   } catch (error) {
     resp.status(401); //unauthorized error
     return resp.json({ error: "invalid...please login" });
@@ -32,11 +35,12 @@ function adminAuthMiddleware(
     req.user = {
       userdata: data,
     };
-    if (+data.isAdmin) {
-      return next();
+    if (Boolean(data.isAdmin)) {
+      next();
+    } else {
+      resp.status(401);
+      return resp.json({ err: "not an admin......you are not authorized" });
     }
-    resp.status(401);
-    return resp.json({ err: "not an admin......you are not authorized" });
   } catch (error) {
     resp.status(401);
     return resp.json({ err: "invalid token" });

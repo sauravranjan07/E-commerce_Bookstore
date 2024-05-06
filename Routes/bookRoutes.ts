@@ -11,7 +11,7 @@ import multer from "multer";
 import path from "path";
 import mongoose from "mongoose";
 let upload_Folder = "media/products";
-const tempMulter=multer({dest:'media/products'})
+const tempMulter = multer({ dest: "media/products" });
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dest = path.join(__dirname, "../") + upload_Folder;
@@ -25,11 +25,7 @@ let storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-bookRouter.post(
-  "/addbook",
-  upload.single("image"),
-  createBook
-);
+bookRouter.post("/addbook", upload.single("image"), createBook);
 bookRouter.get("/allbooks", getAllBooks);
 bookRouter.delete("/deletebook/:id", adminAuthMiddleware, deleteBookById);
 bookRouter.get("/getbookbycategory/:id", findBookByCategory);
