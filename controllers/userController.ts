@@ -102,13 +102,14 @@ async function loginUser(
       });
     }
     const result = await userSchema.findOne({ email: email });
+    let mail_error={
+      message: "Email dosent exist",
+      success: false,
+      token: "Null",
+    }
     if (!result) {
       resp.statusCode = 404;
-      return resp.json({
-        message: "Email dosent exist",
-        success: false,
-        token: "Null",
-      });
+      throw new Error(JSON.stringify(mail_error))
     }
     // 2.if password not matched
     const verifiedPassword = hashPasswordHelper.verify(
