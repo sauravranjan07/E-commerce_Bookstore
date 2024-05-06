@@ -18,17 +18,17 @@ async function createOrder(
       data[index].price = data2?.price;
       data[index].name = data2?.name;
     }
-    let final_result:Array<any>|any = await orderSchema.create(data);
+    let final_result: Array<any> | any = await orderSchema.create(data);
     let { name, email } = req.user?.userData;
-    for(let i=0;i<final_result.length;i++){
-      tp+=final_result[i].price*final_result[i].quantity
+    for (let i = 0; i < final_result.length; i++) {
+      tp += final_result[i].price * final_result[i].quantity;
     }
-    let email_response = await testEmail(email, final_result, name,tp);
+    let email_response = await testEmail(email, final_result, name, tp);
     return resp.send({
       data: final_result,
       success: true,
       email: req.user?.userData.email,
-      total:tp,
+      total: tp,
       email_response: email_response,
     });
   } catch (error: any) {
