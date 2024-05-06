@@ -127,9 +127,10 @@ async function loginUser(
         id: result._id,
         email: result.email,
         isAdmin: result.isAdmin,
+        name:result.name
       };
       const token: string = jsonwebtoken.sign(payload, "Saurav", { //signing JWT Token
-        expiresIn: "240s",
+        expiresIn: "86400s",
       });
       return resp.json({
         message: "Login successfully",

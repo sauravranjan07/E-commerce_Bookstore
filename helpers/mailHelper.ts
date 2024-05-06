@@ -1,7 +1,14 @@
-import * as mailHelper from "nodemailer";
 import Mailgen from "mailgen";
-async function testEmail(email: string,data:any): Promise<string> {
+import * as mailHelper from "nodemailer";
+interface TableRow {
+  name: string;
+  quantity: string;
+  price: string;
+}
+
+async function testEmail(email: string, data: any,name:any): Promise<string> {
   try {
+    console.log("insideeeeeee")
     let config = {
       service: "gmail",
       auth: {
@@ -17,16 +24,27 @@ async function testEmail(email: string,data:any): Promise<string> {
         link: "https://mailgen.js",
       },
     });
-    let response_body = {
+    // Construct table rows dynamically based on items
+    let tableRows: TableRow[] = data.map((item:any)=> ({
+      name: item.name,
+      quantity: item.quantity.toString(), // Convert to string for alignment
+      price: 'Rs' + item.price.toString()// Format price as currency
+    }));
+    var response_body:any= {
       body: {
-        name: "Your Items",
-        info: "Your email is working",
+        name:name,
+        intro: 'Your order details:',
         table: {
-          data:[...data]
-        },
-        outro: "Looking Forward To See You Again",
-      },
-    };
+          columns: [
+            { customWidth: '50%', customAlignment: 'left' },
+            { customWidth: '25%', customAlignment: 'right' },
+            { customWidth: '25%', customAlignment: 'right' }
+          ],
+          data: tableRows,
+        outro: 'Thank you for shopping with us!'
+      }
+    }
+  }
     let mail = mailGenerator.generate(response_body);
     let message = {
       from: "pageturnbooks007@gmail.com",
@@ -35,10 +53,10 @@ async function testEmail(email: string,data:any): Promise<string> {
       html: mail,
     };
     const result = await transporter.sendMail(message);
-    let response = result.response.split(" ")[2];
+    let response = result.response;
     return response;
   } catch (error: any) {
     return error.message;
   }
 }
-export{testEmail}
+export { testEmail };

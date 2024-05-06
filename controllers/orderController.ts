@@ -1,7 +1,8 @@
 import { orderSchema } from "../Models/order";
 import { bookSchema } from "../Models/book";
 import express from "express";
-import {testEmail}from '../helpers/mailHelper'
+import { testEmail } from "../helpers/mailHelper";
+import { userSchema } from "../Models/user";
 // Creating Order
 async function createOrder(
   req: express.Request,
@@ -9,19 +10,28 @@ async function createOrder(
 ): Promise<Record<string, any>> {
   try {
     const data = req.body;
+    let tp = 0;
     for (let index in data) {
       let order = data[index];
       let productId = order.book;
-      let price = (await bookSchema.findOne({ _id: productId }))?.price;
-      data[index].price = price;
+      let data2=await bookSchema.findOne({ _id: productId })
+      data[index].price = data2?.price;
+      data[index].name = data2?.name;
     }
-    const final_result = await orderSchema.create(data);
-    let email_response=await testEmail(req.user?.userData.email,final_result)
+    let final_result = await orderSchema.create(data);
+
+    let{name,email}=req.user?.userData
+  
+    let email_response = await testEmail(
+      email,
+      final_result,
+      name
+    );
     return resp.send({
       data: final_result,
       success: true,
-      email:req.user?.userData.email,
-      email_response:email_response
+      email: req.user?.userData.email,
+      email_response: email_response,
     });
   } catch (error: any) {
     return error.message;

@@ -46,6 +46,7 @@ declare namespace Mailgen {
         dictionary?: any;
         goToAction?: GoToAction | undefined;
         outro?: string | string[] | undefined;
+        total_price?:number|string|undefined
     }
 
     interface Table {
