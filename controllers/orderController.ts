@@ -3,7 +3,6 @@ import { bookSchema } from "../Models/book";
 import express from "express";
 import { testEmail } from "../helpers/mailHelper";
 import { userSchema } from "../Models/user";
-// Creating Order
 async function createOrder(
   req: express.Request,
   resp: express.Response
@@ -76,17 +75,37 @@ async function getAllOrders(
   resq: express.Request,
   resp: express.Response
 ): Promise<Record<string, any>> {
-  if(XPathResult.length!=0){
-    let result = await orderSchema.find();
-    resp.statusCode=200
-  return resp.json({result});
-  }else{
-    resp.statusCode=401
+  let result = await orderSchema.find();
+  if (result.length != 0) {
+    resp.statusCode = 200;
+    return resp.json({ result, TL: result.length });
+  } else {
+    resp.statusCode = 401;
     return resp.json({
-      message:"No order placed",
-      success:false
-    })
+      message: "No order placed",
+      success: false,
+    });
+  }
+}
+async function updateMyOrder(req: express.Request, resp: express.Response) {
+  try {
+    let order_id = req.params.id;
+    let data = req.body;
+    let my_order: any = await orderSchema.findOne({ _id: order_id });
+    if (my_order._id) {
+      my_order = Object.assign(my_order, data);
+      my_order = await my_order.save();
+      return resp.json({ success: true });
+    }
+    else{
+      resp.statusCode=400
+      return resp.json({mesage:"NOT FOUND"})
+    }
+  
+  } catch (error:any) {
+    resp.statusCode=400
+      return resp.json({mesage:error.message})
   }
 }
 
-export { createOrder, getMyOrder, deleteMyOrder, getAllOrders };
+export { createOrder, getMyOrder, deleteMyOrder, getAllOrders, updateMyOrder };
