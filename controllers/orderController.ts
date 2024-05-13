@@ -72,5 +72,21 @@ async function deleteMyOrder(
     });
   }
 }
+async function getAllOrders(
+  resq: express.Request,
+  resp: express.Response
+): Promise<Record<string, any>> {
+  if(XPathResult.length!=0){
+    let result = await orderSchema.find();
+    resp.statusCode=200
+  return resp.json({result});
+  }else{
+    resp.statusCode=401
+    return resp.json({
+      message:"No order placed",
+      success:false
+    })
+  }
+}
 
-export { createOrder, getMyOrder, deleteMyOrder };
+export { createOrder, getMyOrder, deleteMyOrder, getAllOrders };

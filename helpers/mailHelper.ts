@@ -56,7 +56,7 @@ async function testEmail(
     let mail = mailGenerator.generate(response_body);
     let message = {
       from: "pageturnbooks007@gmail.com",
-      to: "ranjansaurav07@gmail.com",
+      to: email,
       subject: "Order Placed!!!",
       html: mail,
     };
