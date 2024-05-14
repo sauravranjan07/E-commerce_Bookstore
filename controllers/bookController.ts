@@ -17,6 +17,7 @@ async function createBook(req: express.Request, resp: express.Response) {
       ...req.body,
       productImage, //giving image name should be same as model name
     });
+    console.log(product)
     const result = await product.save();
     return resp.send({ message: "book added succesfully", result });
   } catch (error: any) {
