@@ -76,11 +76,11 @@ async function getAllOrders(
   resp: express.Response
 ): Promise<Record<string, any>> {
   let result = await orderSchema.find().populate([
-    { path: "book", select: "name" }
+   {path:'user',select:"name"},{path:'book',select:'name'}
   ]);
   if (result.length != 0) {
     resp.statusCode = 200;
-    return resp.json({ result, TL: result.length });
+    return resp.json({result, TL: result.length });
   } else {
     resp.statusCode = 401;
     return resp.json({
