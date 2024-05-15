@@ -75,7 +75,9 @@ async function getAllOrders(
   resq: express.Request,
   resp: express.Response
 ): Promise<Record<string, any>> {
-  let result = await orderSchema.find();
+  let result = await orderSchema
+    .find()
+    .populate([{ path: "book", select: "name" }]);
   if (result.length != 0) {
     resp.statusCode = 200;
     return resp.json({ result, TL: result.length });
@@ -96,15 +98,13 @@ async function updateMyOrder(req: express.Request, resp: express.Response) {
       my_order = Object.assign(my_order, data);
       my_order = await my_order.save();
       return resp.json({ success: true });
+    } else {
+      resp.statusCode = 400;
+      return resp.json({ mesage: "NOT FOUND" });
     }
-    else{
-      resp.statusCode=400
-      return resp.json({mesage:"NOT FOUND"})
-    }
-  
-  } catch (error:any) {
-    resp.statusCode=400
-      return resp.json({mesage:error.message})
+  } catch (error: any) {
+    resp.statusCode = 400;
+    return resp.json({ mesage: error.message });
   }
 }
 
