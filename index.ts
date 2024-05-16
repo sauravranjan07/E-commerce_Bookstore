@@ -9,6 +9,7 @@ import { orderRouter } from "./Routes/orderRoutes";
 import{handleError} from './middlewares/error-handle'
 import 'express-async-errors'
 import cors from "cors";
+let upload_Folder = "media/products";
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -28,11 +29,17 @@ app.get('/',(req:Request,resp:Response)=>{
 })
 const apirouter = express.Router();
 app.use("/api", apirouter);
-apirouter.use("/images", express.static("media/products"));
 apirouter.use("/user", userRouter);
 apirouter.use("/books", bookRouter);
 apirouter.use("/category", categoryRouter);
 apirouter.use("/order", orderRouter);
+apirouter.get('/'+upload_Folder+'/*',(req:express.Request,resp:express.Response,next:express.NextFunction)=>{
+  const path=req.url
+  const filepath=`${__dirname}${path}`
+  resp.sendFile(filepath,(err)=>{
+    next()
+  })
+})
 
 app.use(handleError)
 
