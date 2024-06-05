@@ -4,7 +4,7 @@ let upload_Folder = "media/products";
 
 async function createBook(req: express.Request, resp: express.Response) {
   try {
-    const productImage = upload_Folder +"/"+ req.file?.filename;
+    const productImage = upload_Folder + "/" + req.file?.filename;
     const data = await bookSchema.find({ name: req.body.name });
     if (data.length) {
       resp.statusCode = 400;
@@ -25,9 +25,9 @@ async function createBook(req: express.Request, resp: express.Response) {
 }
 
 async function getAllBooks(req: express.Request, resp: express.Response) {
-  const result = await bookSchema.find().populate([
-    {path:"category",select:"name"}
-  ]);
+  const result = await bookSchema
+    .find()
+    .populate([{ path: "category", select: "name" }]);
   return resp.send({
     dataCount: result.length,
     message: "All books fetched",
@@ -64,4 +64,10 @@ async function findBookByCategory(
     }
   }
 }
-export { createBook, getAllBooks, deleteBookById, findBookByCategory };
+export {
+  
+  createBook,
+  getAllBooks,
+  deleteBookById,
+  findBookByCategory,
+};
