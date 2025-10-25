@@ -1,58 +1,96 @@
+# 📚 E-commerce Bookstore
+
+## Project Overview
+
+This is a robust and scalable E-commerce platform built specifically for an online **Bookstore**. The backend is constructed using **TypeScript** and leverages a modern, modular architecture, following the standard layered pattern (Routes, Controllers, Models) to ensure separation of concerns, maintainability, and efficient request handling.
+
+The application is deployed live at: [e-commerce-bookstore-gilt.vercel.app](https://e-commerce-bookstore-gilt.vercel.app)
+
+---
+
+## 🛠️ Core Functionalities
+
+The platform provides a comprehensive set of features for both customers and potential administrators.
+
+### 1. User Management & Authentication
+
+| Functionality | Description |
+| :--- | :--- |
+| **Sign Up/Registration** | Allows new users to create an account. |
+| **Login/Sign In** | Authenticates returning users using credentials. |
+| **Session Management** | Uses authentication tokens (e.g., JWT) for securing protected routes (`middlewares` folder). |
+| **User Profile** | Ability to view and update personal information and shipping addresses. |
+
+### 2. Book & Catalog Management
+
+| Functionality | Description |
+| :--- | :--- |
+| **View Catalog** | Display a list of all available books (products). |
+| **Product Detail View** | View detailed information for a single book (ISBN, author, summary, price, etc.). |
+| **Search & Filtering** | Allows users to search by title, author, or filter by genre, price range, and language. |
+| **Admin CRUD** | Endpoints for Administrators to manage (**C**reate, **R**ead, **U**pdate, **D**elete) book records. |
+
+### 3. Shopping Cart & Order Management
+
+| Functionality | Description |
+| :--- | :--- |
+| **Add/Update Cart** | Add a book/quantity or modify items in the cart. |
+| **Checkout Process** | Collects shipping details and initiates the payment process (external gateway integration). |
+| **Place Order** | Finalizes the transaction and creates a new order record. |
+| **Order History** | Allows authenticated users to view and track all past orders. |
+
+---
+
+## ⚙️ Architectural Flowchart: Request from Start to End
+
+The application follows a structured API flow, where a request passes through distinct layers (Middlewares → Routes → Controllers → Models → Database).
+
 ### Visual Representation of the Request Flow
 
 ```mermaid
 graph TD
-    subgraph Client Interaction
-        A[User's Browser/App]
-    end
-
-    subgraph Server (E-commerce Bookstore Backend)
-        subgraph Entry Point
-            B[index.ts - Server Initialization & Global Middlewares]
+    subgraph Server_Backend [E-commerce Bookstore Backend]
+        subgraph Entry_Point [Entry Point]
+            B[index.ts - Server Init & Global Middlewares]
         end
 
-        subgraph Authentication & Authorization (Middlewares)
-            C1[middlewares/auth.middleware.ts - Authenticate User (JWT)]
-            C2[middlewares/validation.middleware.ts - Validate Request Body/Params]
-            C3[Other Middlewares (e.g., Logging, Error Handling)]
+        subgraph Middlewares [Authentication & Authorization]
+            C1[middlewares/auth.middleware.ts: Authenticate User (JWT)]
+            C2[middlewares/validation.middleware.ts: Validate Request Body]
         end
 
-        subgraph Routing Layer (routes/)
-            D1[routes/user.route.ts]
-            D2[routes/book.route.ts]
-            D3[routes/cart.route.ts]
-            D4[routes/order.route.ts]
-            D5[routes/admin.route.ts]
+        subgraph Routing [Routing Layer]
+            D3(routes/cart.route.ts)
         end
 
-        subgraph Controller Layer (controllers/)
-            E1[controllers/user.controller.ts]
-            E2[controllers/book.controller.ts]
-            E3[controllers/cart.controller.ts]
-            E4[controllers/order.controller.ts]
+        subgraph Controllers [Controller Layer]
+            E3[controllers/cart.controller.ts: addToCart]
         end
 
-        subgraph Model Layer (models/)
-            F1[models/user.model.ts]
-            F2[models/book.model.ts]
+        subgraph Models [Model Layer]
             F3[models/cart.model.ts]
-            F4[models/order.model.ts]
         end
 
-        subgraph Database Abstraction (database/)
-            G1[database/connection.ts - Connect to DB]
-            G2[database/db-operations.ts - Generic DB Operations]
+        subgraph Database [Database Abstraction]
+            G1[database/connection.ts]
+            G2[DB Operations (CRUD)]
         end
+
+        A[User's Browser/App] -->|HTTP Request: POST /api/cart| B
+        B --> C1
+        C1 -->|If Authenticated| C2
+        C2 -->|If Valid Input| D3
+        D3 --> E3
+        E3 -->|Call Model Method| F3
+        F3 -->|DB Query/Update| G2
+        G2 --> G1
+        G2 -->|Return Data| F3
+        F3 -->|Return Cart Object| E3
+        E3 -->|HTTP Response (200 OK)| J[Client Response]
+        C1 -->|Auth Failure (401)| J
+        C2 -->|Validation Failure (400)| J
     end
 
-    %% Flow Paths
-    A -- HTTP Request --> B
-    B --> C1 --> C2 --|If valid & authenticated| D3(Cart Routes)
-    D3 --> E3(Cart Controller: addToCart)
-    E3 --> F3(Cart Model: save/update) --> G2(DB Operations) --> G1(DB Connection)
-    E3 --> J[HTTP Response to Client]
-    C1 -->|Auth Failure| J
-    
     style A fill:#f9f,stroke:#333
     style B fill:#f9f,stroke:#333
     style J fill:#f9f,stroke:#333
